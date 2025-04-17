@@ -17,14 +17,14 @@ func Connect() {
 	if err != nil {
 		log.Fatal("Failed to connect :", err)
 	}
-	fmt.Println("Database connected ")
+	fmt.Println("connected ")
 }
 
 func Migrate() {
 	err := DB.AutoMigrate(&models.Product{}, &models.GroupBuy{},
-		&models.Order{},)
+		&models.Order{},&models.User{})
 	if err != nil {
-		log.Fatal("Migration failed:", err)
+		log.Fatal(" failed:", err)
 	}
 	fmt.Println("Database migrated ")
 }

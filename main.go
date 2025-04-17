@@ -4,7 +4,7 @@ import (
 	"log"
 	"pinduoduo-back/controllers"
 	"pinduoduo-back/database"
-
+	"pinduoduo-back/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,21 +15,28 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/products", controllers.GetProducts)
-	r.GET("/products/:id", controllers.GetProduct)
-	r.POST("/products", controllers.CreateProduct)
-	r.PUT("/products/:id", controllers.UpdateProduct)
-	r.DELETE("/products/:id", controllers.DeleteProduct)
+	r.POST("/register", controllers.Register)
+	r.POST("/login", controllers.Login)
 
-	r.POST("/groupbuys", controllers.CreateGroupBuy)
-	r.GET("/groupbuys", controllers.GetGroupBuys)
-	r.GET("/groupbuys/:id", controllers.GetGroupBuy)
-	r.POST("/groupbuys/:id/join", controllers.JoinGroupBuy)
+	auth := r.Group("/")
+	auth.Use(middleware.AuthMiddleware())
+	{
+		auth.GET("/products", controllers.GetProducts)
+		auth.GET("/products/:id", controllers.GetProduct)
+		auth.POST("/products", controllers.CreateProduct)
+		auth.PUT("/products/:id", controllers.UpdateProduct)
+		auth.DELETE("/products/:id", controllers.DeleteProduct)
 
-	r.POST("/orders", controllers.CreateOrder)
-	r.GET("/orders", controllers.GetOrders)
-	r.GET("/orders/:id", controllers.GetOrder)
-	r.DELETE("/orders/:id", controllers.DeleteOrder)
+		auth.POST("/groupbuys", controllers.CreateGroupBuy)
+		auth.GET("/groupbuys", controllers.GetGroupBuys)
+		auth.GET("/groupbuys/:id", controllers.GetGroupBuy)
+		auth.POST("/groupbuys/:id/join", controllers.JoinGroupBuy)
+
+		auth.POST("/orders", controllers.CreateOrder)
+		auth.GET("/orders", controllers.GetOrders)
+		auth.GET("/orders/:id", controllers.GetOrder)
+		auth.DELETE("/orders/:id", controllers.DeleteOrder)
+	}
 
 	log.Println("Server http://localhost:8080")
 	r.Run()

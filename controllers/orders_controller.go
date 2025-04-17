@@ -18,7 +18,7 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&order).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при создании заказа"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка создании заказа"})
 		return
 	}
 
@@ -29,7 +29,7 @@ func GetOrders(c *gin.Context) {
 	var orders []models.Order
 
 	if err := database.DB.Preload("GroupBuy").Preload("Product").Find(&orders).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при получении заказов"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка получении заказов"})
 		return
 	}
 
@@ -53,12 +53,12 @@ func DeleteOrder(c *gin.Context) {
 	orderID, err := strconv.Atoi(id)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Неправ ID"})
 		return
 	}
 
 	if err := database.DB.Delete(&models.Order{}, orderID).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при удалении заказа"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка удалении заказа"})
 		return
 	}
 
