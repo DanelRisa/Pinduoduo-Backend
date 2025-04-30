@@ -3,10 +3,11 @@ package controllers
 import (
 	"net/http"
 	"pinduoduo-back/database"
-	"pinduoduo-back/models"
+	"pinduoduo-back/order-service/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func CreateOrder(c *gin.Context) {
@@ -37,16 +38,21 @@ func GetOrders(c *gin.Context) {
 }
 
 func GetOrder(c *gin.Context) {
-	id := c.Param("id")
 	var order models.Order
+	orderID := c.Param("id")
 
-	if err := database.DB.Preload("GroupBuy").Preload("Product").First(&order, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Заказ не найден"})
+	if err := database.DB.Preload("GroupBuy").Preload("Product").First(&order, orderID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving order"})
 		return
 	}
 
 	c.JSON(http.StatusOK, order)
 }
+
 
 func DeleteOrder(c *gin.Context) {
 	id := c.Param("id")

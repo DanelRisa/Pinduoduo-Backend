@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"pinduoduo-back/database"
-	"pinduoduo-back/models"
+	"pinduoduo-back/order-service/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GET /products?page=1&pageSize=10&minPrice=0&maxPrice=100

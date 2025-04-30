@@ -9,6 +9,8 @@ import (
 
 var jwtKey = []byte("secret")
 
+//AuthMiddleware
+
 func AuthMiddleware() gin.HandlerFunc {
     return func(c *gin.Context) {
         authHeader := c.GetHeader("Authorization")

@@ -3,9 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"pinduoduo-back/models"
 	"pinduoduo-back/database"
+	"pinduoduo-back/order-service/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CreateGroupBuy(c *gin.Context) {
@@ -13,6 +14,12 @@ func CreateGroupBuy(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&groupbuy); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var product models.Product
+	if err := database.DB.First(&product, groupbuy.ProductID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product not found"})
 		return
 	}
 
@@ -24,10 +31,12 @@ func CreateGroupBuy(c *gin.Context) {
 		return
 	}
 
+	
 	c.JSON(http.StatusCreated, groupbuy)
 }
 
-// 
+
+//
 
 func GetGroupBuys(c *gin.Context) {
 	var groupbuys []models.GroupBuy
@@ -66,7 +75,7 @@ func JoinGroupBuy(c *gin.Context) {
 
 	groupbuy.Participants += 1
 
-// закр если мдостног
+	// закр если мдостног
 	if groupbuy.Participants >= groupbuy.MinParticipants {
 		groupbuy.Status = "closed"
 	}
