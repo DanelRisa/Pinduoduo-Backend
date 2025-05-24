@@ -12,7 +12,7 @@ var TestDB *gorm.DB    // Для тестовой базы данных
 
 // Connect — подключение к основной базе данных
 func Connect() error {
-	dsn := "host=localhost user=postgres password=251046dd dbname=postgres port=5432 sslmode=disable"
+	dsn := "host=db user=postgres password=251046dd dbname=postgres port=5432 sslmode=disable"
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

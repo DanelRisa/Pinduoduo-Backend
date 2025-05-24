@@ -121,7 +121,6 @@ func TestDeleteProduct(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	// Проверяем, что продукт удален
 	var result models.Product
 	err := database.DB.First(&result, product.ID).Error
 	assert.Error(t, err)

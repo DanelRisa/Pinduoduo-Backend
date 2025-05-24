@@ -12,6 +12,37 @@ import (
 	"strconv"
 	"testing"
 )
+func TestCreateUser(t *testing.T) {
+	initUserTestDB()
+	router := setupUserTestRouter()
+
+	newUser := models.User{
+		Username: "newuser",
+		Email:    "new@gmail.com",
+		Password: "pass",
+	}
+	body, _ := json.Marshal(newUser)
+
+	req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	var created models.User
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
+	assert.Equal(t, newUser.Username, created.Username)
+	assert.Equal(t, newUser.Email, created.Email)
+
+	var fromDB models.User
+	err = database.DB.First(&fromDB, created.ID).Error
+	assert.NoError(t, err)
+	assert.Equal(t, newUser.Email, fromDB.Email)
+}
+
 
 func setupUserTestRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
@@ -20,6 +51,8 @@ func setupUserTestRouter() *gin.Engine {
 	r.GET("/users/:id", GetUser)
 	r.PUT("/users/:id", UpdateUser)
 	r.DELETE("/users/:id", DeleteUser)
+	r.POST("/users", CreateUser)
+
 	return r
 }
 

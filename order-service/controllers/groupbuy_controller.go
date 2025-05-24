@@ -87,3 +87,17 @@ func JoinGroupBuy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, groupbuy)
 }
+func DeleteGroupBuy(c *gin.Context) {
+	id := c.Param("id")
+	var groupbuy models.GroupBuy
+	if err := database.DB.First(&groupbuy, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "groupbuy not found"})
+		return
+	}
+
+	if err := database.DB.Delete(&groupbuy).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "groupbuy deleted"})
+}

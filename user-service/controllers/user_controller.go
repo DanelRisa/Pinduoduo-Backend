@@ -6,6 +6,20 @@ import (
 	"pinduoduo-back/user-service/models"
 	"github.com/gin-gonic/gin"
 )
+func CreateUser(c *gin.Context) {
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	if err := database.DB.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, user)
+}
 
 func GetUsers(c *gin.Context) {
 	var users []models.User
